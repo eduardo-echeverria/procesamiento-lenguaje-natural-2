@@ -23,7 +23,7 @@ para embeddings, **Groq** como modelo de lenguaje y **Streamlit** para el diseñ
 ```
 bash
 git clone https://github.com/eduardo-echeverria/procesamiento-lenguaje-natural-2.git
-cd cv-chatbot
+cd TP1_RAG_Chatbot
 ```
 
 2. **Crear un entorno virtual de Python (Recomendado)**:
