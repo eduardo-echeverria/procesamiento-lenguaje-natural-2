@@ -7,7 +7,7 @@ para embeddings, **Groq** como modelo de lenguaje y **Streamlit** para el diseñ
 El repositorio incluye:
  - rag_chatbot.py (Script de Python con la logica del RAG Chatbot implementada, pero sin Streamlit).
  - rag_chatbot_app.py (Applicacion de RAG Chatbot completa, incluyendo Frontend en Streamlit)
- - rag_chatbot_app_test.mp4 (Video con una prueba realizada en la aplicacion)
+ - rag_chatbot_app_test.mp4 (Video con un test realizado en la aplicacion)
 
 ---
 
@@ -70,10 +70,11 @@ http://localhost:8501
 ## 📂 Estructura del proyecto
 ```
 .
-├── app.py              # Main Streamlit app
-├── requirements.txt    # Python dependencies
-├── README.md           # Project documentation
-└── .env                # API keys (not committed)
+├── rag_chatbot_app_test.mp4    # Video con un test realizado en la aplicacion. 
+├── rag_chatbot_app.py          # Applicacion Streamlit RAG Chatbot principal.
+├── rag_chatbot.py              # Script de Python con la logica RAG Chatbot implementada (Sin Streamlit). 
+├── README.md                   # Documentacion del proyecto
+└── requirements.txt            # Dependencies de Python
 ```
 
 ## ⚠️ Notas
