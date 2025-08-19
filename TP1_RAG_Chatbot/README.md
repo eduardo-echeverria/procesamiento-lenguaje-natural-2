@@ -4,6 +4,11 @@ Este proyecto es un chatbot interactivo que responde preguntas acerca el CV de u
 La aplicacion utiliza **Pinecone** como Base de Datso Vectoriales, **SentenceTransformers** 
 para embeddings, **Groq** como modelo de lenguaje y **Streamlit** para el diseño de la web UI.
 
+El repositorio incluye:
+ - rag_chatbot.py (Script de Python con la logica del RAG Chatbot implementada, pero sin Streamlit).
+ - rag_chatbot_app.py (Applicacion de RAG Chatbot completa, incluyendo Frontend en Streamlit)
+ - rag_chatbot_app_test.mp4 (Video con una prueba realizada en la aplicacion)
+
 ---
 
 ## 🚀 Caracteristicas
@@ -55,7 +60,7 @@ para matener las Keys seguras.
 
 Inicialice el servidor de Streamlit:
 ```
-streamlit run app.py
+streamlit run rag_chatbot_app.py
 ```
 Streamlit abrira una ventana de browser en:
 ```
