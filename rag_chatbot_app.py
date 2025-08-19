@@ -1,31 +1,72 @@
 import os
 import time
-# import numpy as np
 from groq import Groq
 from typing import List, Dict, Any, Tuple
 from pinecone import Pinecone, ServerlessSpec
 from sentence_transformers import SentenceTransformer
 import streamlit as st
 
+# Definimos algunos parametros globales
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 conversation_history = []
 
 # Generacion de Embeddings
 class EmbeddingsGenerator:
+    """
+    Clase para la generacion de Embeddings. Utiliza el modelo 'SentenceTransformer'
+    de Hugging Face.
+    """
     def __init__(self, modelo: str = "sentence-transformers/all-MiniLM-L6-v2"):
+        """
+        Inicializa el generador de Embeddings
+
+        Args:
+            modelo (str, optional): Nombre del modelo a cargar. Valor defaults es 
+                `"sentence-transformers/all-MiniLM-L6-v2"`.
+        """
         self.modelo = SentenceTransformer(modelo)
         self.dimension = self.modelo.get_sentence_embedding_dimension()
 
         print(f"✅ Modelo '{modelo}' cargado (dimensión: {self.dimension})")
     
     def generate_embedding(self, texto: str) -> List[float]:
+        """
+        Genera un embedding para una entrada de textp
+
+        Args:
+            texto (str): El texto de entrada a codificar
+
+        Returns:
+            List[float]: Vector de embedding representando el texto de entrada.
+        """
         return self.modelo.encode(texto).tolist()
     
     def generate_embeddings_batch(self, textos: List[str]) -> List[List[float]]:
+        """
+        Genera embeddings para entradas de texto en batches.
+
+        Args:
+            textos (List[str]): Lista de strings a codificar
+
+        Returns:
+            List[List[float]]: Lista de vectores de embedding vectors, uno por cada text introducido.
+        """
         return [emb.tolist() for emb in self.modelo.encode(textos)]
     
 # Configuracion Pinecone
 def pinecone_config():
+    """
+    Configura e inicializa el cliente de Pinecone utilizando variables de entorno.
+
+    Variables de entorno:
+        PINECONE_API_KEY (str): Pinecone API Key.
+
+    Raises:
+        ValueError: Si la variable de entorno 'PINECONE_API_KEY' no esta setteada.
+
+    Returns:
+        Pinecone: una instancia inicializada de Pinecone.
+    """
     # Obtenemos las variables de entorno
     pc_api_key = os.getenv("PINECONE_API_KEY")
 
@@ -38,6 +79,18 @@ def pinecone_config():
 
 # Configuracion Groq
 def groq_client():
+    """
+    Configura e inicializa el cliente de Groq utilizando variables de entorno.
+
+    Variables de entorno:
+        GROQ_API_KEY (str): Groq API Key.
+
+    Raises:
+        ValueError: Si la variable de entorno 'GROQ_API_KEY' no esta setteada.
+
+    Returns:
+        Groq: una instancia inicializada de Groq.
+    """
     # Obtenemos las variables de entorno
     gc_api_key = os.getenv("GROQ_API_KEY")
 
@@ -50,6 +103,25 @@ def groq_client():
 
 # Creacion del indice
 def create_index(pc, index_name, dimension=384, metric="cosine"):
+    """
+    Crea y/o obtiene el Pinecone index.
+
+    Esta funcion verifica si un index con el nombre proporcionado existe.
+    Si existiese, este index es retornado. En caso contrario crea un nuevo
+    index con la configuracion especificada.
+
+    Args:
+        pc (Pinecone): Instancia inicializada del cliente Pinecone.
+        index_name (str): nombre del index a crear o recuperar.
+        dimension (int, optional): Dimension de los embeddings. Valor defaults es 384.
+        metric (str, optional): Metrica utilizada para la busqueda vectorial. Valor defaults es "cosine".
+
+    Raises:
+        TimeoutError: Si el indez no es encontrado en 30 segundos.
+
+    Returns:
+        pinecone.Index: Un objeto de index Pinecone (Existente or nuevo).
+    """
     # Verificamos si el indice existe
     existing_indexes = pc.list_indexes()
     for idx in existing_indexes:
@@ -78,6 +150,17 @@ def create_index(pc, index_name, dimension=384, metric="cosine"):
 
 # Construimos el contenido del indice
 def build_index_content(index, index_name, embeddings_generator):
+    """
+    Completa el Pinecone Index con un documento de ejemplo y sus embeddings
+
+    Args:
+        index (pinecone.Index): Objeto Pinecone index donde todos los vectores seran insertados.
+        index_name (str): Nombre del index.
+        embeddings_generator (EmbeddingsGenerator): instancia 'EmbeddingsGenerator'.
+
+    Returns:
+        bool: True si los vectores fueron exitosamente agregados al index.
+    """
     docs = [
         {
             "id": "001",
@@ -181,6 +264,21 @@ def build_index_content(index, index_name, embeddings_generator):
     return True
 
 def chatbot(gc, query_input, index, embeddings_generator):
+    """
+    Este Chatbot responde a la consulta de un usuario utilizando busqueda por 
+    base de datos vectorial desde un index de Pinecone y utiliza el modelo de
+    lenguaje Groq para generar respuestas.
+
+    Args:
+        gc (Groq): Instancia de cliente Groq utilizada para interactuar con el modelo de lenguaje.
+        query_input (str): Consulta del usuario.
+        index (pinecone.Index): Index Pinecone utilizado para busqueda vectorial.
+        embeddings_generator (EmbeddingsGenerator): Instancia de 'EmbeddingsGenerator'.
+
+    Returns:
+        str: String con la respuesta generadoa por el modelo. Si no se encuentra un documento
+        relevante, retirna un mensaje default inidicando data insuficiente.
+    """
     # Variable for Groq
     global conversation_history
 
