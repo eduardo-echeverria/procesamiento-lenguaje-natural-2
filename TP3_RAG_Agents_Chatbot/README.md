@@ -66,6 +66,7 @@ Streamlit abrirá una ventana del navegador en:
 http://localhost:8501
 ```
 ## 📂 Estructura del proyecto
+```
 .
 ├── rag_multiCV_chatbot_app.py      # Aplicación Streamlit principal con SafeAgentExecutor
 ├── candidates.py                   # Diccionario con los candidatos y sus CVs
@@ -73,6 +74,7 @@ http://localhost:8501
 ├── rag_agents_app.py               # Codigo con la implementacion de LangChain agents
 ├── README.md                       # Documentación del proyecto
 └── requirements.txt                # Dependencias de Python
+```
 
 ## ⚠️ Notas técnicas
 
