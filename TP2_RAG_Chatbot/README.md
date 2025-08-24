@@ -28,7 +28,7 @@ El repositorio incluye:
 ```
 bash
 git clone https://github.com/eduardo-echeverria/procesamiento-lenguaje-natural-2.git
-cd TP1_RAG_Chatbot
+cd TP2_RAG_Chatbot
 ```
 
 2. **Crear un entorno virtual de Python (Recomendado)**:
